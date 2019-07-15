@@ -1,6 +1,6 @@
-package marshaler
+package marshaller
 
-// DjangoMarshaler stores passwords in Django like format
-var DjangoMarshaler = HexMarshaler{Separator: "$"}
+// DjangoMarshaller stores passwords in Django like format
+var DjangoMarshaller = HexMarshaller{Separator: "$"}
 
-// var DjangoMarshaler = HexMarshaler{Template: "{{.Code}}${{.Iterations}}${{.Salt}}${{.Password}}", Pattern: "^(\\w+)\\$(\\d+)\\$(\\w*)\\$(\\w+)$"}
+// var DjangoMarshaller = HexMarshaller{Template: "{{.Code}}${{.Iterations}}${{.Salt}}${{.Password}}", Pattern: "^(\\w+)\\$(\\d+)\\$(\\w*)\\$(\\w+)$"}

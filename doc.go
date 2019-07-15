@@ -1,2 +1,2 @@
-// Package marshaler contains a set of password marshalers
-package marshaler
+// Package marshaller contains a set of password marshallers
+package marshaller
