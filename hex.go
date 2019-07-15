@@ -17,47 +17,7 @@ type HexMarshaller struct {
 
 // Marshal hasher.Hasher to string
 func (m *HexMarshaller) Marshal(h hasher.Hasher) (string, error) {
-		}
-	case hasher.TypeSHA384:
-		hh := h.(*hasher.SHA384Hasher)
-		params = templateParams{
-			Code:       h.Code(),
-			Iterations: *hh.Iter,
-			Salt:       *hh.Salt,
-			Password:   hex.EncodeToString(*hh.Password),
-		}
-	case hasher.TypeSHA512:
-		hh := h.(*hasher.SHA512Hasher)
-		params = templateParams{
-			Code:       h.Code(),
-			Iterations: *hh.Iter,
-			Salt:       *hh.Salt,
-			Password:   hex.EncodeToString(*hh.Password),
-		}
-	case hasher.TypeSHA512_224:
-		hh := h.(*hasher.SHA512_224Hasher)
-		params = templateParams{
-			Code:       h.Code(),
-			Iterations: *hh.Iter,
-			Salt:       *hh.Salt,
-			Password:   hex.EncodeToString(*hh.Password),
-		}
-	case hasher.TypeSHA512_256:
-		hh := h.(*hasher.SHA512_256Hasher)
-		params = templateParams{
-			Code:       h.Code(),
-			Iterations: *hh.Iter,
-			Salt:       *hh.Salt,
-			Password:   hex.EncodeToString(*hh.Password),
-		}
-	}
-	params.Separator = m.Separator
-	buf := bytes.NewBufferString("")
-	err := marshalTemplate.ExecuteTemplate(buf, "marshalTemplate", params)
-	if err != nil {
-		return "", err
-	}
-	return buf.String(), nil
+	return marshal(h, m.Separator, encodeToStringFunc(hex.EncodeToString))
 }
 
 // Unmarshal string to Hasher
@@ -83,5 +43,5 @@ func (m *HexMarshaller) Unmarshal(s string) (hasher.Hasher, error) {
 		return nil, err
 	}
 
-	return hasher.New(submatch[1], &iter, &submatch[3], &password)
+	return hasher.NewWithParams(submatch[1], &iter, &submatch[3], &password)
 }
