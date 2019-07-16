@@ -2,7 +2,10 @@ package marshaller
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
+	"regexp"
+	"strconv"
 
 	"github.com/go-passwd/hasher"
 )
@@ -114,4 +117,31 @@ func marshal(h hasher.Hasher, separator string, encodeFunc encodeToStringFunc) (
 		return "", err
 	}
 	return buf.String(), nil
+}
+
+type decodeStringFunc func(string) ([]byte, error)
+
+func unmarshal(s, separator string, decodeFunc decodeStringFunc) (hasher.Hasher, error) {
+	buf := bytes.NewBufferString("")
+	params := templateParams{Separator: separator}
+	err := unmarshalPattern.ExecuteTemplate(buf, "unmarshalPattern", params)
+	if err != nil {
+		return nil, err
+	}
+	re := regexp.MustCompile(buf.String())
+	submatch := re.FindStringSubmatch(s)
+	if submatch == nil {
+		return nil, fmt.Errorf("cannot unmarshal string %s", s)
+	}
+
+	password, err := decodeFunc(submatch[4])
+	if err != nil {
+		return nil, err
+	}
+	iter, err := strconv.Atoi(submatch[2])
+	if err != nil {
+		return nil, err
+	}
+
+	return hasher.NewWithParams(submatch[1], &iter, &submatch[3], &password)
 }
